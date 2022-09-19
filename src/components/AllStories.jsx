@@ -182,7 +182,7 @@ export default function AllStories({
                         onChange={async (e) =>
                           setEditedRequest({
                             ...editedRequest,
-                            description: await uploadToIpfs(e),
+                            image: await uploadToIpfs(e),
                           })
                         }
                         type="file"
