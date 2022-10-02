@@ -80,7 +80,7 @@ const compileProgram = async (programSource) => {
 
 // CREATE REQUEST: ApplicationCreateTxn
 export const createRequestAction = async (senderAddress, request) => {
-  console.log("Adding request...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -122,32 +122,27 @@ export const createRequestAction = async (senderAddress, request) => {
 
   // Sign & submit the transaction
   let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-  console.log("Signed transaction with txID: %s", txId);
+  
   await algodClient.sendRawTransaction(signedTxn.blob).do();
 
   // Wait for transaction to be confirmed
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
   // Get the completed Transaction
-  console.log(
-    "Transaction " +
-      txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 
   // Get created application id and notify about completion
   let transactionResponse = await algodClient
     .pendingTransactionInformation(txId)
     .do();
   let appId = transactionResponse["application-index"];
-  console.log("Created new app-id: ", appId);
+  
   return appId;
 };
 
 // DONATE: Group transaction consisting of ApplicationCallTxn and PaymentTxn
 export const donateRequestAction = async (senderAddress, request, amount) => {
-  console.log("Donating...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -185,7 +180,7 @@ export const donateRequestAction = async (senderAddress, request, amount) => {
   let signedTxn = await myAlgoConnect.signTransaction(
     txnArray.map((txn) => txn.toByte())
   );
-  console.log("Signed group transaction");
+  
   let tx = await algodClient
     .sendRawTransaction(signedTxn.map((txn) => txn.blob))
     .do();
@@ -194,17 +189,11 @@ export const donateRequestAction = async (senderAddress, request, amount) => {
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
   // Notify about completion
-  console.log(
-    "Group transaction " +
-      tx.txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
-};
+  
 
 // EDIT REQUEST: Edit existing request
 export const editRequestAction = async (senderAddress, request) => {
-  console.log("Editing request...", request);
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -233,24 +222,19 @@ export const editRequestAction = async (senderAddress, request) => {
 
   // Sign & submit the transaction
   let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-  console.log("Signed transaction with txID: %s", txId);
+  
   await algodClient.sendRawTransaction(signedTxn.blob).do();
 
   // Wait for transaction to be confirmed
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
   // Get the completed Transaction
-  console.log(
-    "Transaction " +
-      txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 };
 
 // DELETE REQUEST: ApplicationDeleteTxn
 export const deleteRequestAction = async (senderAddress, index) => {
-  console.log("Deleting application...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -266,31 +250,26 @@ export const deleteRequestAction = async (senderAddress, index) => {
 
   // Sign & submit the transaction
   let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-  console.log("Signed transaction with txID: %s", txId);
+  
   await algodClient.sendRawTransaction(signedTxn.blob).do();
 
   // Wait for transaction to be confirmed
   const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
   // Get the completed Transaction
-  console.log(
-    "Transaction " +
-      txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 
   // Get application id of deleted application and notify about completion
   let transactionResponse = await algodClient
     .pendingTransactionInformation(txId)
     .do();
   let appId = transactionResponse["txn"]["txn"].apid;
-  console.log("Deleted app-id: ", appId);
+  
 };
 
 // GET REQUESTS: Use indexer
 export const getRequestsAction = async () => {
-  console.log("Fetching requests...");
+  
   window.sdk = algosdk;
   let note = new TextEncoder().encode(requestNote);
   let encodedNote = Buffer.from(note).toString("base64");
@@ -313,7 +292,7 @@ export const getRequestsAction = async () => {
       }
     }
   }
-  console.log("Requests fetched.");
+  
   return requests;
 };
 
