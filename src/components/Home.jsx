@@ -68,63 +68,67 @@ export default function Home({
   }, []);
 
   const createRequest = async () => {
-    setLoading(true);
-    createRequestAction(address, { ...newRequest, createdAt: Date.now() })
-      .then(() => {
-        toast(<NotificationSuccess text="Request added successfully." />);
-        getRequests();
-        fetchBalance(address);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast(<NotificationError text="Failed to create a request." />);
-        setLoading(false);
-      });
+    try {
+      setLoading(true);
+      await createRequestAction(address, {...newRequest, createdAt: Date.now()})
+
+      toast(<NotificationSuccess text="Request added successfully."/>);
+      getRequests();
+      fetchBalance(address);
+
+    } catch (error) {
+      console.log(error);
+      toast(<NotificationError text="Failed to create a request."/>);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const editRequest = async (editedRequest) => {
-    setLoading(true);
-    editRequestAction(address, editedRequest)
-      .then(() => {
-        toast(<NotificationSuccess text="Request edited successfully." />);
-        getRequests();
-        fetchBalance(address);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast(<NotificationError text="Failed to edit request." />);
-        setLoading(false);
-      });
+    try {
+      setLoading(true);
+      await editRequestAction(address, editedRequest)
+      toast(<NotificationSuccess text="Request edited successfully."/>);
+      getRequests();
+      fetchBalance(address);
+    } catch (error) {
+      console.log(error);
+      toast(<NotificationError text="Failed to edit request."/>);
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   const donateRequest = async (request, amount) => {
-    setLoading(true);
-    donateRequestAction(address, request, amount)
-      .then(() => {
-        toast(<NotificationSuccess text="Donated successfully" />);
-        getRequests();
-        fetchBalance(address);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast(<NotificationError text="Failed to donate request." />);
-        setLoading(false);
-      });
+    try {
+      setLoading(true);
+      await donateRequestAction(address, request, amount)
+      toast(<NotificationSuccess text="Donated successfully"/>);
+      getRequests();
+      fetchBalance(address);
+    } catch (error) {
+      console.log(error);
+      toast(<NotificationError text="Failed to donate request."/>);
+      setLoading(false);
+    }
+
   };
 
   const deleteRequest = async (request) => {
-    setLoading(true);
-    deleteRequestAction(address, request.appId)
-      .then(() => {
-        toast(<NotificationSuccess text="Request deleted successfully" />);
-        getRequests();
-        fetchBalance(address);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast(<NotificationError text="Failed to delete request." />);
-        setLoading(false);
-      });
+    try {
+      setLoading(true);
+      await deleteRequestAction(address, request.appId)
+
+      toast(<NotificationSuccess text="Request deleted successfully"/>);
+      getRequests();
+      fetchBalance(address);
+    } catch (error) {
+      console.log(error);
+      toast(<NotificationError text="Failed to delete request."/>);
+      setLoading(false);
+    }
+
   };
 
   const isFormFilled = useCallback(() => {
@@ -261,11 +265,20 @@ export default function Home({
                   <div className="btn">
                     <span>Select Image</span>
                     <input
-                      onChange={async (e) =>
-                        setNewRequest({
-                          ...newRequest,
-                          image: await uploadToIpfs(e),
-                        })
+                      onChange={async (e) => {
+                        try {
+                          setLoading(true)
+                          const uploadImage = await uploadToIpfs(e)
+                          setNewRequest({
+                            ...newRequest,
+                            image: uploadImage,
+                          })
+                        } catch (e) {
+                          console.log({e})
+                        } finally {
+                          setLoading(false)
+                        }
+                      }
                       }
                       type="file"
                       name="image"
